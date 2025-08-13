@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0d47a1">
+    <meta name="description" content="The Study Guide  - Your offline study companion">
+    <title>The Study Guide </title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <link rel="apple-touch-icon" href="./icon-192.png">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <!-- App Shell -->
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <img src="./logo.png" alt="Study Guide Logo" class="logo">
+                <h1 class="app-title">Study Guide</h1>
+                <button id="logout-btn" class="logout-btn" style="display: none;" aria-label="Logout">
+                    <span>Logout</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main id="main-content" class="main-content">
+            <!-- Auth View -->
+            <div id="auth-view" class="view">
+                <div class="auth-container">
+                    <div class="auth-tabs">
+                        <button id="login-tab" class="tab-btn active" data-tab="login">Login</button>
+                        <button id="signup-tab" class="tab-btn" data-tab="signup">Sign Up</button>
+                    </div>
+                    
+                    <!-- Login Form -->
+                    <form id="login-form" class="auth-form">
+                        <div class="form-group">
+                            <label for="login-username">Username</label>
+                            <input type="text" id="login-username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </form>
+                    
+                    <!-- Signup Form -->
+                    <form id="signup-form" class="auth-form" style="display: none;">
+                        <div class="form-group">
+                            <label for="signup-username">Username</label>
+                            <input type="text" id="signup-username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-password">Password</label>
+                            <input type="password" id="signup-password" required minlength="6">
+                            <small>Minimum 6 characters</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-confirm">Confirm Password</label>
+                            <input type="password" id="signup-confirm" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Sign Up</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="view" style="display: none;">
+                <div class="dashboard-container">
+                    <div class="welcome-section">
+                        <h2 id="welcome-text">Welcome back!</h2>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-number" id="notes-count">0</div>
+                                <div class="stat-label">Notes</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="last-score">-</div>
+                                <div class="stat-label">Last Quiz Score</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="action-btn" data-route="notes">
+                            <span class="action-icon">📝</span>
+                            <span>My Notes</span>
+                        </button>
+                        <button class="action-btn" data-route="quiz">
+                            <span class="action-icon">🧠</span>
+                            <span>Take Quiz</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes View -->
+            <div id="notes-view" class="view" style="display: none;">
+                <div class="notes-container">
+                    <div class="notes-header">
+                        <h2>My Notes</h2>
+                        <button id="add-note-btn" class="btn btn-primary">Add Note</button>
+                    </div>
+                    <div class="search-container">
+                        <input type="text" id="notes-search" placeholder="Search notes..." class="search-input">
+                    </div>
+                    <div id="notes-list" class="notes-list">
+                        <div class="empty-state">
+                            <p>No notes yet. Create your first note!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz View -->
+            <div id="quiz-view" class="view" style="display: none;">
+                <div class="quiz-container">
+                    <div class="quiz-tabs">
+                        <button id="take-quiz-tab" class="tab-btn active" data-tab="take">Take Quiz</button>
+                        <button id="admin-quiz-tab" class="tab-btn" data-tab="admin">Manage Questions</button>
+                    </div>
+                    
+                    <!-- Take Quiz -->
+                    <div id="take-quiz-content" class="quiz-content">
+                        <div id="quiz-start" class="quiz-start">
+                            <h3>Ready to test your knowledge?</h3>
+                            <p>10 questions • Multiple choice</p>
+                            <button id="start-quiz-btn" class="btn btn-primary">Start Quiz</button>
+                        </div>
+                        
+                        <div id="quiz-active" class="quiz-active" style="display: none;">
+                            <div class="quiz-progress">
+                                <div class="progress-bar">
+                                    <div id="progress-fill" class="progress-fill"></div>
+                                </div>
+                                <span id="question-counter">1 / 10</span>
+                            </div>
+                            
+                            <div class="question-container">
+                                <h3 id="question-text"></h3>
+                                <div id="options-container" class="options-container"></div>
+                            </div>
+                            
+                            <div class="quiz-navigation">
+                                <button id="prev-btn" class="btn btn-secondary" disabled>Previous</button>
+                                <button id="next-btn" class="btn btn-primary" disabled>Next</button>
+                                <button id="submit-quiz-btn" class="btn btn-success" style="display: none;">Submit Quiz</button>
+                            </div>
+                        </div>
+                        
+                        <div id="quiz-results" class="quiz-results" style="display: none;">
+                            <div class="results-header">
+                                <h3>Quiz Complete!</h3>
+                                <div class="score-display">
+                                    <span id="final-score">0</span> / <span id="total-questions">10</span>
+                                </div>
+                            </div>
+                            <div id="results-review" class="results-review"></div>
+                            <button id="retake-quiz-btn" class="btn btn-primary">Take Again</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Admin Quiz -->
+                    <div id="admin-quiz-content" class="quiz-content" style="display: none;">
+                        <div class="admin-header">
+                            <h3>Manage Quiz Questions</h3>
+                            <button id="add-question-btn" class="btn btn-primary">Add Question</button>
+                        </div>
+                        <div id="questions-list" class="questions-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile View -->
+            <div id="profile-view" class="view" style="display: none;">
+                <div class="profile-container">
+                    <div class="profile-header">
+                        <h2>Profile</h2>
+                    </div>
+                    <div class="profile-info">
+                        <div class="info-item">
+                            <label>Username:</label>
+                            <span id="profile-username"></span>
+                        </div>
+                        <div class="info-item">
+                            <label>Member since:</label>
+                            <span id="profile-joined"></span>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <button id="change-password-btn" class="btn btn-secondary">Change Password</button>
+                        <button id="delete-account-btn" class="btn btn-danger">Delete Account</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav id="bottom-nav" class="bottom-nav" style="display: none;">
+            <button class="nav-btn" data-route="dashboard">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Dashboard</span>
+            </button>
+            <button class="nav-btn" data-route="notes">
+                <span class="nav-icon">📝</span>
+                <span class="nav-label">Notes</span>
+            </button>
+            <button class="nav-btn" data-route="quiz">
+                <span class="nav-icon">🧠</span>
+                <span class="nav-label">Quiz</span>
+            </button>
+            <button class="nav-btn" data-route="profile">
+                <span class="nav-icon">👤</span>
+                <span class="nav-label">Profile</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title"></h3>
+                <button id="modal-close" class="modal-close" aria-label="Close modal">&times;</button>
+            </div>
+            <div id="modal-body" class="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Scripts -->
+    <script src="./app.js"></script>
+</body>
+</html>
